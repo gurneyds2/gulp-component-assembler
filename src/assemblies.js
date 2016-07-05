@@ -86,9 +86,9 @@ function processAssembly(assembly, assemblyName, options, isSub) {
 
   // *********************
   // Process locale files
-  if (hasTranslations) {
-    assemblyContents += locales.process(localePath, localeFileName, path.basename(projectPath), options) + "\n\n";
-  }
+  // if (hasTranslations) {
+    assemblyContents += locales.process(hasTranslations, localePath, localeFileName, path.basename(projectPath), projectPath, options) + "\n\n";
+  // }
 
   // *********************
   // Process template files

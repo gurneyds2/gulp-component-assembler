@@ -51,12 +51,19 @@ function processOldTemplates(templatePath, hasTranslations, assemblyPath, option
 
     contents += '\nfunction getSnippets() {'+
                 '\n  var snip = document.createElement("div");';
-    if (hasTranslations) {
-      contents += '\n  snip.innerHTML = snippetsRaw.format(lang);';
+
+    if (process.env.TAAS_EX) {
+      contents += '\n  snip.innerHTML = format(snippetsRaw)';
     }
     else {
-      contents += '\n  snip.innerHTML = snippetsRaw;';
+      if (hasTranslations) {
+        contents += '\n  snip.innerHTML = snippetsRaw.format(lang);';
+      }
+      else {
+        contents += '\n  snip.innerHTML = snippetsRaw;';
+      }
     }
+
     contents += '\n  return snip;\n}';
   }
 

@@ -9,6 +9,8 @@ gulp-component-assembler
 [![Coveralls Status](https://img.shields.io/coveralls/intervalia/gulp-component-assembler.svg)](https://coveralls.io/r/intervalia/gulp-component-assembler)
 -->
 
+**NOTE:** This repo has been forked and does not maintain a backward compatible state with the original repo.
+
 ---
 
 >Always reference the documents on the git repo since they are updated more often then the NPM package website. I update NPM when there is a code change. I might change documentation without a code change and, at that time, I would not update the version number or NPM release.

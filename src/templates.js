@@ -37,20 +37,27 @@ function processTemplates(projectPath, templateList, hasTranslations, options) {
                   '  if (!templateList[key]) {\n' +
                   '    console.warn("No template named \'" + key + "\'");\n' +
                   '  }\n';
-      if (hasTranslations) {
-        // __gca_formatStr is Added when locales are added (locales.js)
-        contents += '\n  return __gca_formatStr(templateList[key] || "", lang);\n}\n\n'+
-                    'var __gca_formatStrRe = /\{([^}]+)\}/g;\n'+
-                    'function __gca_formatStr(txt, obj) {\n'+
-                    '  if (typeof obj !== "object") {\n'+
-                    '    obj = Array.prototype.slice.call(arguments, 1);\n'+
-                    '  }\n\n'+
-                    ' return txt.replace(__gca_formatStrRe, function (fullKey, key) {\n'+
-                    '   return obj[key] === undefined ? fullKey : obj[key];\n'+
-                    '  });\n'+
-                    '}';
-      } else {
-        contents += '\n  return templateList[key] || "";\n}';
+
+
+      if (process.env.TAAS_EX) {
+        contents += '\n  return format(templateList[key]);\n}';
+      }
+      else {
+        if (hasTranslations) {
+          // __gca_formatStr is Added when locales are added (locales.js)
+          contents += '\n  return __gca_formatStr(templateList[key] || "", lang);\n}\n\n'+
+                      'var __gca_formatStrRe = /\{([^}]+)\}/g;\n'+
+                      'function __gca_formatStr(txt, obj) {\n'+
+                      '  if (typeof obj !== "object") {\n'+
+                      '    obj = Array.prototype.slice.call(arguments, 1);\n'+
+                      '  }\n\n'+
+                      ' return txt.replace(__gca_formatStrRe, function (fullKey, key) {\n'+
+                      '   return obj[key] === undefined ? fullKey : obj[key];\n'+
+                      '  });\n'+
+                      '}';
+        } else {
+          contents += '\n  return templateList[key] || "";\n}';
+        }
       }
     }
     contents += '\n\n' +
