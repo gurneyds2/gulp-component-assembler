@@ -16,6 +16,7 @@ describe('\n    Testing the file locales.js', function () {
     var baseLocalePath = path.join(rootPath, "testdata/localeTests/one");
     var localeFileName = "test";
     var assemblyName = "one";
+    var assemblyPath = path.join(rootPath, "testdata/localeTests");
     var window = {};
     var options = {
       locale: "en"  // the default locale set by index.js
@@ -47,7 +48,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(finaLangKeys, langKeys);
     });
@@ -60,7 +61,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(finalLangs, langs);
     });
@@ -73,7 +74,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(finalValidLocales, validLocales);
     });
@@ -90,7 +91,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(finalGetLangRu, getLang('ru'));
       should.deepEqual(finalGetLangEo, getLang('eo'));
@@ -105,7 +106,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(finalLang, lang);
     });
@@ -124,7 +125,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(finalGetLangEs, getLang('es'));
     });
@@ -139,7 +140,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(getLang('de'), getLang(acceptLanguage));
     });
@@ -154,7 +155,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(getLang('en'), getLang(acceptLanguage));
     });
@@ -169,7 +170,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(getLang('zh-cn'), getLang(acceptLanguage));
     });
@@ -184,7 +185,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(getLang('zh-cn'), getLang(acceptLanguage));
     });
@@ -200,7 +201,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(finalGetLangRu, lang);
     });
@@ -212,6 +213,7 @@ describe('\n    Testing the file locales.js', function () {
     var baseLocalePath = path.join(rootPath, "testdata/localeTests/one");
     var localeFileName = "test";
     var assemblyName = "one";
+    var assemblyPath = path.join(rootPath, "testdata/localeTests");
     var window = {};
     var options = {
       locale: "en",  // the default locale set by index.js
@@ -229,7 +231,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(finalGetLangFr, lang);
     });
@@ -240,6 +242,7 @@ describe('\n    Testing the file locales.js', function () {
     var baseLocalePath = path.join(rootPath, "testdata/localeTests/one");
     var localeFileName = "test";
     var assemblyName = "one";
+    var assemblyPath = path.join(rootPath, "testdata/localeTests");
     var window = {};
     var options = {
       locale: "en",  // the default locale set by index.js
@@ -256,7 +259,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(finalGetLangKe, getLang('ke'));
     });
@@ -271,7 +274,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(finalGetLangZz, getLang('zz'));
     });
@@ -282,6 +285,7 @@ describe('\n    Testing the file locales.js', function () {
     var baseLocalePath = path.join(rootPath, "testdata/localeTests/one");
     var localeFileName = "test";
     var assemblyName = "one";
+    var assemblyPath = path.join(rootPath, "testdata/localeTests");
     var window = {};
     var options = {
       locale: "en",  // the default locale set by index.js
@@ -298,7 +302,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(finalLang, window.components.one.lang);
     });
@@ -314,7 +318,7 @@ describe('\n    Testing the file locales.js', function () {
           variables: langKeys, langs, validLocales, lang
           functions: getLang()
       */
-      eval(locales.process(baseLocalePath, localeFileName, assemblyName, options));
+      eval(locales.process(true, baseLocalePath, localeFileName, assemblyName, assemblyPath, options));
 
       should.deepEqual(finalLang, window.test.one.lang);
     });
