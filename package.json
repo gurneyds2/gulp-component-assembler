@@ -40,9 +40,9 @@
   "homepage": "https://github.com/intervalia/gulp-component-assembler",
   "dependencies": {
     "chokidar": "^1.4.2",
-    "glob": "^4.5.3",
+    "glob": "^5.0.15",
     "gulp-util": "^3.0.7",
-    "minimatch": "^1.0.0",
+    "minimatch": "^3.0.2",
     "native-promise-only": "^0.8.1",
     "through2": "^0.6.5",
     "touch": "^1.0.0"
