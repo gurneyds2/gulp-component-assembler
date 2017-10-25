@@ -3,6 +3,7 @@ var path = require('path');
 var PluginError = require('gulp-util').PluginError;
 var PLUGIN_NAME = require("./pluginName");
 
+// TODO - pass in a flag to indicate if we are processing all locales, or just one - and pass in the one
 function processLocales(baseLocalePath, localeFileName, assemblyName, options) {
   "use strict";
 
@@ -16,6 +17,7 @@ function processLocales(baseLocalePath, localeFileName, assemblyName, options) {
     localeList =["zz","ke"];
   }
 
+  // TODO - need the ability to just process a single language here
   translations = readLocaleFiles(baseLocalePath, localeFileName, options.locale);
 
   if (translations && translations.key) {
@@ -116,7 +118,9 @@ function processLocales(baseLocalePath, localeFileName, assemblyName, options) {
   return contents;
 }
 
+// TODO - maybe move this code to a higher level and pass it down, so that we can optionally process 1 locale at a time
 function readLocaleFiles(baseLocalePath, baseName, defaultLocale) {
+  // TODO - how can we read just a single file? Maybe build the path of the file and read it rather than reading a directory
   var files = fs.readdirSync(baseLocalePath),
       re = baseName + "_(.*).json",
       langs = {"langs":[]};
@@ -148,7 +152,10 @@ function readLocaleFiles(baseLocalePath, baseName, defaultLocale) {
       }
     }
   });
-  
+
+  // langs.langs returns an array of the strings
+  console.log("found langs:" + JSON.stringify(langs.langs));
+  console.log("found langs:" + JSON.stringify(langs));
   return langs;
 }
 

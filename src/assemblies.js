@@ -47,11 +47,13 @@ function processAssembly(assembly, assemblyName, options, isSub) {
   var localePath, localeFileName;
   var locale, hasTranslations;
   var temp;
+  var splitByLocales;
 
   locale = options.locale;
   localeFileName = assembly.localeFileName || "strings";
   localePath = path.join(projectPath, (assembly.localePath || "locales"));
   hasTranslations = areTranslationsAvailable(locale, localePath, localeFileName);
+  splitByLocales = assembly.splitByLocales || false;
 
   if (!hasTranslations && localeFileName === "strings") {
     localeFileName  = path.basename(projectPath);
@@ -110,6 +112,8 @@ function processAssembly(assembly, assemblyName, options, isSub) {
   // *********************
   // Process locale files
   if (hasTranslations) {
+    console.log("localePath:" + localePath + " localFileName:" + localeFileName);
+    console.log("About to call locales.process ==> assembly:" + JSON.stringify(assembly));
     assemblyContents += locales.process(localePath, localeFileName, path.basename(projectPath), options) + "\n\n";
   }
 
