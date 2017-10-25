@@ -39,9 +39,27 @@ function assemble(options) {
     var localeArray = findLocales(localePath, localeFileName, options.locale);
     console.log("Found locales:" + localeArray);
 
+    if(localeArray && assembly.splitByLocales === true) {
+      localeArray.forEach( (locale) => {
+        var contents;
+        try {
+          contents = new Buffer(assemblies.process(assembly, file.path, locale, options));
+        } catch (err) {
+          callback(new PluginError(PLUGIN_NAME, err));
+        }
+
+        var localeSpecificFile = new gutil.File({
+          "path": "transfile_" + locale + ".js",
+          "contents": contents
+        });
+        this.push(localeSpecificFile);
+      });
+    } else {
+      // Don't split into multiple files
+    }
+
     try {
-      file.contents = new Buffer(assemblies.process(assembly, file.path, options));
-//      console.log("Processed file contents=" + file.contents);
+      file.contents = new Buffer(assemblies.process(assembly, file.path, null, options));
     } catch (err) {
       callback(new PluginError(PLUGIN_NAME, err));
     }
@@ -70,43 +88,34 @@ function assemble(options) {
 }
 
 function findLocales(baseLocalePath, baseName, defaultLocale) {
-  // TODO - how can we read just a single file? Maybe build the path of the file and read it rather than reading a directory
-  var files = fs.readdirSync(baseLocalePath),
-      re = baseName + "_(.*).json",
-      langs = {"langs":[]};
+  try {
+    var files = fs.readdirSync(baseLocalePath),
+        re = baseName + "_(.*).json",
+        langArray = [];
 
-  if(!files || files.length === 0) {
-    return null;
-  }
+    if(!files || files.length === 0) {
+      return null;
+    }
 
-  files = files.forEach(function(file) {
-    var fileContents, lang, data, key, toks = file.match(re);
+    files = files.forEach(function(file) {
+      var lang, toks = file.match(re);
 
-    if(toks) {
-      lang = toks[1];
-      fileContents = fs.readFileSync(path.join(baseLocalePath, file), {"encoding": "utf-8"});
+      if(toks) {
+        lang = toks[1];
+        fileContents = fs.readFileSync(path.join(baseLocalePath, file), {"encoding": "utf-8"});
 
-      try {
-        data = JSON.parse(fileContents);
-        langs[lang] = data;
-        langs.langs.push(lang);
-      } catch(e) {
-        throw new PluginError(PLUGIN_NAME, "Unable to parse locale file: " + path.join(baseLocalePath, file) + ":: " + e);
-      }
-
-      if (lang === defaultLocale) {
-        langs.key = [];
-        for (key in data) {
-          langs.key.push(key);
+        try {
+          langArray.push(lang);
+        } catch(e) {
+          throw new PluginError(PLUGIN_NAME, "Unable to parse locale file: " + path.join(baseLocalePath, file) + ":: " + e);
         }
       }
-    }
-  });
+    });
 
-  // langs.langs returns an array of the strings
-  console.log("found langs:" + JSON.stringify(langs.langs));
-  console.log("found langs:" + JSON.stringify(langs));
-  return langs.langs;
+    return langArray;
+  } catch(e) {
+    return null;
+  }
 }
 
 // exporting the plugin main function

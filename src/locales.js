@@ -3,8 +3,7 @@ var path = require('path');
 var PluginError = require('gulp-util').PluginError;
 var PLUGIN_NAME = require("./pluginName");
 
-// TODO - pass in a flag to indicate if we are processing all locales, or just one - and pass in the one
-function processLocales(baseLocalePath, localeFileName, assemblyName, options) {
+function processLocales(baseLocalePath, localeFileName, assemblyName, processLocale, options) {
   "use strict";
 
   var key, keys = [], len, keyStr, contents = "";
@@ -17,8 +16,7 @@ function processLocales(baseLocalePath, localeFileName, assemblyName, options) {
     localeList =["zz","ke"];
   }
 
-  // TODO - need the ability to just process a single language here
-  translations = readLocaleFiles(baseLocalePath, localeFileName, options.locale);
+  translations = readLocaleFiles(baseLocalePath, localeFileName, processLocale, options.locale);
 
   if (translations && translations.key) {
     contents += "var langKeys = "+JSON.stringify(translations.key)+";\n";
@@ -118,9 +116,7 @@ function processLocales(baseLocalePath, localeFileName, assemblyName, options) {
   return contents;
 }
 
-// TODO - maybe move this code to a higher level and pass it down, so that we can optionally process 1 locale at a time
-function readLocaleFiles(baseLocalePath, baseName, defaultLocale) {
-  // TODO - how can we read just a single file? Maybe build the path of the file and read it rather than reading a directory
+function readLocaleFiles(baseLocalePath, baseName, processLocale, defaultLocale) {
   var files = fs.readdirSync(baseLocalePath),
       re = baseName + "_(.*).json",
       langs = {"langs":[]};
@@ -134,20 +130,22 @@ function readLocaleFiles(baseLocalePath, baseName, defaultLocale) {
 
     if(toks) {
       lang = toks[1];
-      fileContents = fs.readFileSync(path.join(baseLocalePath, file), {"encoding": "utf-8"});
+      if(processLocale == null || (processLocale && processLocale === lang)) {
+        fileContents = fs.readFileSync(path.join(baseLocalePath, file), {"encoding": "utf-8"});
 
-      try {
-        data = JSON.parse(fileContents);
-        langs[lang] = data;
-        langs.langs.push(lang);
-      } catch(e) {
-        throw new PluginError(PLUGIN_NAME, "Unable to parse locale file: " + path.join(baseLocalePath, file) + ":: " + e);
-      }
+        try {
+          data = JSON.parse(fileContents);
+          langs[lang] = data;
+          langs.langs.push(lang);
+        } catch(e) {
+          throw new PluginError(PLUGIN_NAME, "Unable to parse locale file: " + path.join(baseLocalePath, file) + ":: " + e);
+        }
 
-      if (lang === defaultLocale) {
-        langs.key = [];
-        for (key in data) {
-          langs.key.push(key);
+        if (lang === defaultLocale || processLocale) {
+          langs.key = [];
+          for (key in data) {
+            langs.key.push(key);
+          }
         }
       }
     }

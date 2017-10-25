@@ -38,7 +38,7 @@ function areTranslationsAvailable(locale, localePath, localeFileName) {
   }
 }
 
-function processAssembly(assembly, assemblyName, options, isSub) {
+function processAssembly(assembly, assemblyName, processLocale, options, isSub) {
   "use strict";
   var projectPath = path.dirname(assemblyName);
   var assemblies, contents, assemblyContents = "";
@@ -114,7 +114,7 @@ function processAssembly(assembly, assemblyName, options, isSub) {
   if (hasTranslations) {
     console.log("localePath:" + localePath + " localFileName:" + localeFileName);
     console.log("About to call locales.process ==> assembly:" + JSON.stringify(assembly));
-    assemblyContents += locales.process(localePath, localeFileName, path.basename(projectPath), options) + "\n\n";
+    assemblyContents += locales.process(localePath, localeFileName, path.basename(projectPath), processLocale, options) + "\n\n";
   }
 
   // *********************
