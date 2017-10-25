@@ -10,9 +10,6 @@ var plugin = require("./plugin");
 var PLUGIN_NAME = require("./pluginName");
 
 function assemble(options) {
-  console.log("==========================STARTING ASSEMBLE===============================================");
-  console.log('options:' + JSON.stringify(options));
-
   "use strict";
   var assemblyStream = new stream.Transform({objectMode: true});
   var firstTime = true;
@@ -23,68 +20,67 @@ function assemble(options) {
     var assembly, temp;
     try {
       assembly = JSON.parse(file.contents);
-      console.log();
-      console.log("ASSEMBLY path=" + file.path + " contents:" + JSON.stringify(assembly));
-      console.log();
     }
     catch(ex) {
       callback(new PluginError(PLUGIN_NAME, "Unable to parse .json file: " + file.path));
     }
 
-    // TODO - determine the locales and call this for each locale if the split flag is set
+    // Determine the locales and call this for each locale if the split flag is set
     var projectPath = path.dirname(file.path);
     var localePath = path.join(projectPath, (assembly.localePath || "locales"));
     var localeFileName = assembly.localeFileName || "strings";
-    console.log("projectPath:" + projectPath + " localePath:" + localePath + " localeFileName;" + localeFileName);
     var localeArray = findLocales(localePath, localeFileName, options.locale);
-    console.log("Found locales:" + localeArray);
 
     if(localeArray && assembly.splitByLocales === true) {
+      // Create multiple files - 1 for each locale
       localeArray.forEach( (locale) => {
-        var contents;
-        try {
-          contents = new Buffer(assemblies.process(assembly, file.path, locale, options));
-        } catch (err) {
-          callback(new PluginError(PLUGIN_NAME, err));
-        }
-
-        var localeSpecificFile = new gutil.File({
-          "path": "transfile_" + locale + ".js",
-          "contents": contents
-        });
-        this.push(localeSpecificFile);
+        createAssembly(firstTime, this, assembly, file.path, locale, options);
+        firstTime = false;
       });
     } else {
       // Don't split into multiple files
+     createAssembly(firstTime, this, assembly, file.path, null, options);
+     firstTime = false;
     }
-
-    try {
-      file.contents = new Buffer(assemblies.process(assembly, file.path, null, options));
-    } catch (err) {
-      callback(new PluginError(PLUGIN_NAME, err));
-    }
-
-    temp = path.dirname(file.path);
-    if (options.useOldDest) {
-      file.path = path.join(temp, path.basename(temp)+'.js');
-    }
-    else {
-      file.path = path.join(path.dirname(temp), path.basename(temp)+'.js');
-    }
-    this.push(file);
-
-    if (firstTime && options.useExternalLib) {
-      firstTime = false;
-      var file2 = new gutil.File({
-        "path": path.join(options.externalLibPath || "./", options.externalLibName || "assembly-lib.js"),
-        "contents": new Buffer(externalFuncs.template(options))
-      });
-      this.push(file2);
-    }
-    callback();
   };
 
   return assemblyStream;
+}
+
+function createAssembly(firstTime, stream, assembly, filePath, processLocale, options) {
+  var contents;
+  try {
+    contents = new Buffer(assemblies.process(assembly, filePath, processLocale, options));
+  } catch (err) {
+    callback(new PluginError(PLUGIN_NAME, err));
+  }
+
+  temp = path.dirname(filePath);
+  if (options.useOldDest) {
+    filePath = path.join(temp, path.basename(temp)+'.js');
+  }
+  else {
+    if(processLocale) {
+      filePath = path.join(path.dirname(temp), path.basename(temp)+'_'+processLocale+'.js');
+    } else {
+      filePath = path.join(path.dirname(temp), path.basename(temp)+'.js');
+    }
+  }
+
+  var localeSpecificFile = new gutil.File({
+    "path": filePath,
+    "contents": contents
+  });
+
+  stream.push(localeSpecificFile);
+
+  if (firstTime && options.useExternalLib) {
+    var file2 = new gutil.File({
+      "path": path.join(options.externalLibPath || "./", options.externalLibName || "assembly-lib.js"),
+      "contents": new Buffer(externalFuncs.template(options))
+    });
+    stream.push(file2);
+  }
 }
 
 function findLocales(baseLocalePath, baseName, defaultLocale) {
@@ -114,6 +110,7 @@ function findLocales(baseLocalePath, baseName, defaultLocale) {
 
     return langArray;
   } catch(e) {
+    // This just means that no locales were found
     return null;
   }
 }

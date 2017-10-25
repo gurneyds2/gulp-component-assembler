@@ -152,8 +152,6 @@ function readLocaleFiles(baseLocalePath, baseName, processLocale, defaultLocale)
   });
 
   // langs.langs returns an array of the strings
-  console.log("found langs:" + JSON.stringify(langs.langs));
-  console.log("found langs:" + JSON.stringify(langs));
   return langs;
 }
 

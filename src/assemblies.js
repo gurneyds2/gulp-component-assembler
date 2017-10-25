@@ -112,8 +112,6 @@ function processAssembly(assembly, assemblyName, processLocale, options, isSub) 
   // *********************
   // Process locale files
   if (hasTranslations) {
-    console.log("localePath:" + localePath + " localFileName:" + localeFileName);
-    console.log("About to call locales.process ==> assembly:" + JSON.stringify(assembly));
     assemblyContents += locales.process(localePath, localeFileName, path.basename(projectPath), processLocale, options) + "\n\n";
   }
 
