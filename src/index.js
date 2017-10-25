@@ -34,12 +34,12 @@ function assemble(options) {
     if(localeArray && assembly.splitByLocales === true) {
       // Create multiple files - 1 for each locale
       localeArray.forEach( (locale) => {
-        createAssembly(firstTime, this, assembly, file.path, locale, options);
+        createAssembly(firstTime, this, assembly, file.path, locale, options, callback);
         firstTime = false;
       });
     } else {
       // Don't split into multiple files
-     createAssembly(firstTime, this, assembly, file.path, null, options);
+     createAssembly(firstTime, this, assembly, file.path, null, options, callback);
      firstTime = false;
     }
   };
@@ -47,7 +47,7 @@ function assemble(options) {
   return assemblyStream;
 }
 
-function createAssembly(firstTime, stream, assembly, filePath, processLocale, options) {
+function createAssembly(firstTime, stream, assembly, filePath, processLocale, options, callback) {
   var contents;
   try {
     contents = new Buffer(assemblies.process(assembly, filePath, processLocale, options));
