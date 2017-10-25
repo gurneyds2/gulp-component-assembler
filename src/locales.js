@@ -3,17 +3,17 @@ var path = require('path');
 var PluginError = require('gulp-util').PluginError;
 var PLUGIN_NAME = require("./pluginName");
 
-function processLocales(baseLocalePath, localeFileName, assemblyName, processLocale, options) {
+function processLocales(baseLocalePath, localeFileName, assemblyName, options, processLocale) {
   "use strict";
   var contents;
-  var translations = readLocaleFiles(baseLocalePath, localeFileName, processLocale, options.locale);
+  var translations = readLocaleFiles(baseLocalePath, localeFileName, options.locale, processLocale);
 
   if (translations && translations.key) {
     if(translations.langs.length == 1) {
       var transStrings = translations[translations.langs[0]];
       contents = "var lang=" + JSON.stringify(transStrings) + ";";
     } else {
-      contents = outputMultipleLocales(localeFileName, translations, options);
+      contents = outputMultipleLocales(assemblyName, localeFileName, translations, options);
     }
 
     if (options.exposeLang) {
@@ -29,7 +29,7 @@ function processLocales(baseLocalePath, localeFileName, assemblyName, processLoc
   return contents;
 }
 
-function outputMultipleLocales(localeFileName, translations, options) {
+function outputMultipleLocales(assemblyName, localeFileName, translations, options) {
   var key, keys = [], len, keyStr, contents = "";
   var strings, localeList = [];
   var supportTransKeys = !!options.supportTransKeys;
@@ -40,11 +40,9 @@ function outputMultipleLocales(localeFileName, translations, options) {
     localeList =["zz","ke"];
   }
 
-  var supportTransKeys = !!options.supportTransKeys;
+  contents = "var langKeys = "+JSON.stringify(translations.key)+";\n";
 
-  var contents = "var langKeys = "+JSON.stringify(translations.key)+";\n";
-
-  var len = translations.langs.length-1;
+  len = translations.langs.length-1;
 
   // Output the langs table.
   contents += "var langs = {\n";
@@ -131,7 +129,7 @@ function outputMultipleLocales(localeFileName, translations, options) {
   return contents;
 }
 
-function readLocaleFiles(baseLocalePath, baseName, processLocale, defaultLocale) {
+function readLocaleFiles(baseLocalePath, baseName, defaultLocale, processLocale) {
   var files = fs.readdirSync(baseLocalePath),
       re = baseName + "_(.*).json",
       langs = {"langs":[]};

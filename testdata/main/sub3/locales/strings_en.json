@@ -1,3 +1,4 @@
 {
-  "parseerror": "yup"
+  "info-to-devs": "The comma on the next line is suppose to be there for unit testing purposes",
+  "parseerror": "yup",
 }

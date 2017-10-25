@@ -55,7 +55,7 @@ function createAssembly(firstTime, stream, assembly, filePath, processLocale, op
     callback(new PluginError(PLUGIN_NAME, err));
   }
 
-  temp = path.dirname(filePath);
+  var temp = path.dirname(filePath);
   if (options.useOldDest) {
     filePath = path.join(temp, path.basename(temp)+'.js');
   }
@@ -98,7 +98,6 @@ function findLocales(baseLocalePath, baseName, defaultLocale) {
 
       if(toks) {
         lang = toks[1];
-        fileContents = fs.readFileSync(path.join(baseLocalePath, file), {"encoding": "utf-8"});
 
         try {
           langArray.push(lang);

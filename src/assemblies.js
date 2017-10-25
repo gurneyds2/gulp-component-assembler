@@ -112,7 +112,7 @@ function processAssembly(assembly, assemblyName, processLocale, options, isSub) 
   // *********************
   // Process locale files
   if (hasTranslations) {
-    assemblyContents += locales.process(localePath, localeFileName, path.basename(projectPath), processLocale, options) + "\n\n";
+    assemblyContents += locales.process(localePath, localeFileName, path.basename(projectPath), options, processLocale) + "\n\n";
   }
 
   // *********************
