@@ -44,6 +44,8 @@ function outputMultipleLocales(localeFileName, translations, options) {
 
   var contents = "var langKeys = "+JSON.stringify(translations.key)+";\n";
 
+  var len = translations.langs.length-1;
+
   // Output the langs table.
   contents += "var langs = {\n";
   translations.langs.sort().forEach(function(locale, index) {
@@ -60,7 +62,7 @@ function outputMultipleLocales(localeFileName, translations, options) {
       }
     });
     contents += '  "'+locale+'": ' + JSON.stringify(strings);
-    if (index >= 0) {
+    if (index >= len) {
       contents += "\n";
     } else {
       contents += ",\n";
