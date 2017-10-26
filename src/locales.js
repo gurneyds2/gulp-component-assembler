@@ -6,12 +6,12 @@ var PLUGIN_NAME = require("./pluginName");
 function processLocales(baseLocalePath, localeFileName, assemblyName, options, processLocale) {
   "use strict";
   var contents;
-  var translations = readLocaleFiles(baseLocalePath, localeFileName, options.locale, processLocale);
+  var translations = readLocaleFiles(baseLocalePath, localeFileName, options.locale);
 
   if (translations && translations.key) {
-    if(translations.langs.length == 1) {
-      var transStrings = translations[translations.langs[0]];
-      contents = "var lang=" + JSON.stringify(transStrings) + ";";
+    if(processLocale) {
+      var transString = generateTranslationString(translations, processLocale, options);
+      contents = "var lang=" + JSON.stringify(transString) + ";";
     } else {
       contents = outputMultipleLocales(assemblyName, localeFileName, translations, options);
     }
@@ -29,6 +29,20 @@ function processLocales(baseLocalePath, localeFileName, assemblyName, options, p
   return contents;
 }
 
+function generateTranslationString(translations, locale, options) {
+  strings = [];
+
+  translations.key.forEach(function(key, keyIndex) {
+    if (options.tagMissingStrings) {
+      strings.push(translations[locale][key] || "-*"+(translations[options.locale][key] || "Not Found")+"*-");
+    }
+    else {
+      strings.push(translations[locale][key] || translations[options.locale][key] || "");
+    }
+  });
+  return strings;
+}
+
 function outputMultipleLocales(assemblyName, localeFileName, translations, options) {
   var key, keys = [], len, keyStr, contents = "";
   var strings, localeList = [];
@@ -40,8 +54,6 @@ function outputMultipleLocales(assemblyName, localeFileName, translations, optio
     localeList =["zz","ke"];
   }
 
-  contents = "var langKeys = "+JSON.stringify(translations.key)+";\n";
-
   len = translations.langs.length-1;
 
   // Output the langs table.
@@ -49,16 +61,8 @@ function outputMultipleLocales(assemblyName, localeFileName, translations, optio
   translations.langs.sort().forEach(function(locale, index) {
     localeList.push(locale);
     contents +=  "  // Included locale file: " + localeFileName + "_" + locale + ".json\n";
-    strings = [];
 
-    translations.key.forEach(function(key, keyIndex) {
-      if (options.tagMissingStrings) {
-        strings.push(translations[locale][key] || "-*"+(translations[options.locale][key] || "Not Found")+"*-");
-      }
-      else {
-        strings.push(translations[locale][key] || translations[options.locale][key] || "");
-      }
-    });
+    strings = generateTranslationString(translations, locale, options);
     contents += '  "'+locale+'": ' + JSON.stringify(strings);
     if (index >= len) {
       contents += "\n";
@@ -129,7 +133,7 @@ function outputMultipleLocales(assemblyName, localeFileName, translations, optio
   return contents;
 }
 
-function readLocaleFiles(baseLocalePath, baseName, defaultLocale, processLocale) {
+function readLocaleFiles(baseLocalePath, baseName, defaultLocale) {
   var files = fs.readdirSync(baseLocalePath),
       re = baseName + "_(.*).json",
       langs = {"langs":[]};
@@ -143,28 +147,25 @@ function readLocaleFiles(baseLocalePath, baseName, defaultLocale, processLocale)
 
     if(toks) {
       lang = toks[1];
-      if(processLocale == null || (processLocale && processLocale === lang)) {
-        fileContents = fs.readFileSync(path.join(baseLocalePath, file), {"encoding": "utf-8"});
+      fileContents = fs.readFileSync(path.join(baseLocalePath, file), {"encoding": "utf-8"});
 
-        try {
-          data = JSON.parse(fileContents);
-          langs[lang] = data;
-          langs.langs.push(lang);
-        } catch(e) {
-          throw new PluginError(PLUGIN_NAME, "Unable to parse locale file: " + path.join(baseLocalePath, file) + ":: " + e);
-        }
+      try {
+        data = JSON.parse(fileContents);
+        langs[lang] = data;
+        langs.langs.push(lang);
+      } catch(e) {
+        throw new PluginError(PLUGIN_NAME, "Unable to parse locale file: " + path.join(baseLocalePath, file) + ":: " + e);
+      }
 
-        if (lang === defaultLocale || processLocale) {
-          langs.key = [];
-          for (key in data) {
-            langs.key.push(key);
-          }
+      if (lang === defaultLocale) {
+        langs.key = [];
+        for (key in data) {
+          langs.key.push(key);
         }
       }
     }
   });
 
-  // langs.langs returns an array of the strings
   return langs;
 }
 
