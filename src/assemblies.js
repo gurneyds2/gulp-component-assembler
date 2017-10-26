@@ -38,7 +38,7 @@ function areTranslationsAvailable(locale, localePath, localeFileName) {
   }
 }
 
-function processAssembly(assembly, assemblyName, options, isSub) {
+function processAssembly(assembly, assemblyName, processLocale, options, isSub) {
   "use strict";
   var projectPath = path.dirname(assemblyName);
   var assemblies, contents, assemblyContents = "";
@@ -47,11 +47,13 @@ function processAssembly(assembly, assemblyName, options, isSub) {
   var localePath, localeFileName;
   var locale, hasTranslations;
   var temp;
+  var splitByLocales;
 
   locale = options.locale;
   localeFileName = assembly.localeFileName || "strings";
   localePath = path.join(projectPath, (assembly.localePath || "locales"));
   hasTranslations = areTranslationsAvailable(locale, localePath, localeFileName);
+  splitByLocales = assembly.splitByLocales || false;
 
   if (!hasTranslations && localeFileName === "strings") {
     localeFileName  = path.basename(projectPath);
@@ -110,7 +112,7 @@ function processAssembly(assembly, assemblyName, options, isSub) {
   // *********************
   // Process locale files
   if (hasTranslations) {
-    assemblyContents += locales.process(localePath, localeFileName, path.basename(projectPath), options) + "\n\n";
+    assemblyContents += locales.process(localePath, localeFileName, path.basename(projectPath), options, processLocale) + "\n\n";
   }
 
   // *********************
